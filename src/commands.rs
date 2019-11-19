@@ -47,16 +47,21 @@ impl Command for TimerGetCommand {
         "TIMER.GET"
     }
 
-    //TIMER.GET <key>
+    //TIMER.GET <key> <debug flag>
     fn run(&self, r: redis::Redis, args: &[&str]) -> Result<(), RModError> {
-        if args.len() < 2 {
+        if args.len() < 2 || args.len() > 3 {
             return Err(error!(
-                "Usage: {} <key>",
+                "Usage: {} <key> [<debug flag>]",
                 self.name()
             ));
         }
-        let key = args[1];
 
+        let key = args[1];
+        let (debug_flag, arr_n): (bool, i64) = match args.len() {
+            2 => (false, 1),
+            3 => (true, 3),
+            _ => (false, 1)
+        };
 
         let raw_val_opt = r.open_key_writable(&key).read()?;
         let raw_val = match raw_val_opt {
@@ -74,7 +79,13 @@ impl Command for TimerGetCommand {
 
         let left_t = sche.left_unix_t.get() as i64;
         if left_t >= 1 {
-            return Ok(r.reply_integer(left_t)?)
+            r.reply_array(arr_n)?;
+            r.reply_integer(left_t)?;
+            if debug_flag {
+                r.reply_integer(store_unix_t as i64)?;
+                r.reply_with_simple_string(&store_cron_s);
+            }
+            return Ok(())
         };
 
         let next_unix_t = match sche.find_next_schedule_as_unix_t(){
@@ -85,7 +96,13 @@ impl Command for TimerGetCommand {
         let val = format!("{}{}", next_unix_t, store_cron_s);
         r.open_key_writable(&key).write(&val)?;
 
-        Ok(r.reply_integer(left_t)?)
+        r.reply_array(arr_n)?;
+        r.reply_integer(left_t)?;
+        if debug_flag {
+            r.reply_integer(store_unix_t as i64)?;
+            r.reply_with_simple_string(&store_cron_s);
+        }
+        Ok(())
     }
 
     fn str_flags(&self) -> &'static str {
