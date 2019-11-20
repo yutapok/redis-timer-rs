@@ -6,13 +6,14 @@ use redis_mod::RModError;
 
 use crate::schedule::Schedule;
 
+
+//TIMER.SET <key> <sheduleJob_str>
 pub struct TimerSetCommand {}
 impl Command for TimerSetCommand {
     fn name(&self) -> &'static str {
         "TIMER.SET"
     }
 
-    //TIMER.SET <key> <sheduleJob_str>
     fn run(&self, r: redis::Redis, args: &[&str]) -> Result<(), RModError> {
         if args.len() < 3 {
             return Err(error!(
@@ -41,13 +42,14 @@ impl Command for TimerSetCommand {
 
 }
 
+
+//TIMER.GET <key> <debug flag>
 pub struct TimerGetCommand {}
 impl Command for TimerGetCommand {
     fn name(&self) -> &'static str {
         "TIMER.GET"
     }
 
-    //TIMER.GET <key> <debug flag>
     fn run(&self, r: redis::Redis, args: &[&str]) -> Result<(), RModError> {
         if args.len() < 2 || args.len() > 3 {
             return Err(error!(
