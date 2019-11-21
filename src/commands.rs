@@ -27,7 +27,7 @@ impl Command for TimerSetCommand {
             Some(v) => v,
             None => return Err(error!(&format!(
                 "TimeSetError: Failed to get next schedule from '{}'",
-                args[1]
+                args[2]
             )))
         };
 
