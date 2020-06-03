@@ -33,6 +33,7 @@ impl Command for TimerSetCommand {
 
         let val = format!("{}{}", next_unix_t, args[2]);
         r.open_key_writable(&key).write(&val)?;
+        r.replicate_verbatim();
         Ok(r.reply_ok())
     }
 
@@ -104,6 +105,7 @@ impl Command for TimerGetCommand {
             r.reply_integer(store_unix_t as i64)?;
             r.reply_with_simple_string(&store_cron_s);
         }
+        r.replicate_verbatim();
         Ok(())
     }
 
