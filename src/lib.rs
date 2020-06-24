@@ -1,5 +1,7 @@
+//#![crate_type = "dylib"]
+
 mod commands;
-mod schedule;
+mod timer;
 
 use std::str;
 use libc::c_int;
