@@ -3,9 +3,13 @@
 ## Usage
 
 ### SET
-``` TIMER.SET <key> <cron fmt str> [<debug flg>] ```
+``` TIMER.SET <key> <cron fmt str> <timezone str>[default=UTC]```
 - if success, return `OK`
 - if not success, return `Error`
+- macro format is available
+  - @yearly @monthly @daily @hourly
+- string format at week is available
+  - Mon,Sun
 
 ### GET
 ``` TIMER.GET <key> ```
@@ -28,7 +32,7 @@ For example:
 
 ### Use Case:
 ```
-127.0.0.1:6379> TIMER.SET sample_job '*/1 * * * *'  <-- timeup per 1 minutes
+127.0.0.1:6379> TIMER.SET sample_job '0/15 * * * *' 'Asia/Tokyo'  <-- (simple format) timeup per 15 minutes
 OK
 127.0.0.1:6379> TIMER.GET sample
 1) (integer) 18
@@ -44,4 +48,8 @@ OK
 1) (integer) 37
 2) (integer) 1574668200  <--- change to next time by timeup.
 3) */1 * * * *
+127.0.0.1:6379> TIMER.SET sample_job '* 0/15 * * * Fri *' 'Asia/Tokyo'  <-- (full format) timeup per 15 minutes on Fri
+OK
+127.0.0.1:6379> TIMER.SET sample_job '@hourly' 'Asia/Tokyo'  <-- (macro format) timeup per 1 hours
+OK
 ```
