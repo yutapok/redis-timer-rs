@@ -9,7 +9,45 @@ use crate::timer::Timer;
 
 
 
-//TIMER.SET <key> <sheduleJob_str>
+pub struct TimerCommand {}
+impl Command for TimerCommand {
+    fn name(&self) -> &'static str {
+        "TIMER"
+    }
+
+    fn run(&self, r: redis::Redis, args: &[&str]) -> Result<(), RModError> {
+        if args.len() < 2 {
+            return Err(error!(
+                "Usage: {} <1: action type [GET,SET]> <2: key> ...",
+                self.name()
+            ));
+        }
+
+        let action_type = args[1];
+        let action_args_vec = vec![vec!["TIMER"], args[2..].to_vec()]
+            .into_iter()
+            .flatten()
+            .collect::<Vec<_>>();
+
+        match action_type.to_lowercase().as_str() {
+          "set" => TimerSetCommand {}.run(r, action_args_vec.as_slice()),
+          "get" => TimerGetCommand {}.run(r, action_args_vec.as_slice()),
+          _ => return Err(error!(
+                   "Unsupported action type, 'GET' 'SET' are allowed. '{}' is not allowed",
+                   action_type
+               ))
+        }
+
+    }
+
+    fn str_flags(&self) -> &'static str {
+        "write fast deny-oom"
+    }
+}
+
+
+
+//TIMER.SET <key> <sheduleJob_str> <timezone>
 pub struct TimerSetCommand {}
 impl Command for TimerSetCommand {
     fn name(&self) -> &'static str {
