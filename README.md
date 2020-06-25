@@ -23,6 +23,12 @@
     3. cron format which registered
     4. time left (sec)
 
+### TIMER
+``` TIMER <action>[SET, GET] <key> ...```
+- level is higher above those command.
+- TIMER SET is same as TIMER.SET
+- TIMER GET is same as TIMER.GET
+
 For example:
 ```
 127.0.0.1:6379> TIMER.GET sample
