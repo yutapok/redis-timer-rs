@@ -17,25 +17,33 @@ impl Command for TimerSetCommand {
     }
 
     fn run(&self, r: redis::Redis, args: &[&str]) -> Result<(), RModError> {
-        if args.len() < 4 {
+        if args.len() < 3 || args.len() > 4 {
             return Err(error!(
-                "Usage: {} <method>",
+                "Usage: {} <2: keyname> <3: cron format> [<4: timezone>]",
                 self.name()
             ));
         }
-        let key = args[1];
 
-        let sche = Timer::new(args[2], args[3]);
+        let key = args[1];
+        let cronformat = args[2];
+
+        let timezone = match args.len() {
+            3 => "UTC",
+            4 => args[3],
+            _ => "UTC"
+        };
+
+        let sche = Timer::new(cronformat, timezone);
         let next_unix_t = match sche.find_next_schedule(){
             Some(v) => v,
             None => return Err(error!(&format!(
                 "TimeSetError: Failed to get next schedule from input args, format: '{}', timezone: '{}'",
-                args[2],
-                args[3]
+                cronformat,
+                timezone
             )))
         };
 
-        let val = format!("{}{}{}", next_unix_t.timestamp(), args[2], args[3]);
+        let val = format!("{}{}{}", next_unix_t.timestamp(), cronformat, timezone);
         r.open_key_writable(&key).write(&val)?;
         r.replicate_verbatim();
         Ok(r.reply_ok())
@@ -58,7 +66,7 @@ impl Command for TimerGetCommand {
     fn run(&self, r: redis::Redis, args: &[&str]) -> Result<(), RModError> {
         if args.len() < 2 || args.len() > 3 {
             return Err(error!(
-                "Usage: {} <key> [<debug flag>]",
+                "Usage: {} <2: key> [<3: debug flag>]",
                 self.name()
             ));
         }
