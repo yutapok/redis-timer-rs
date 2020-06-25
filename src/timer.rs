@@ -7,7 +7,7 @@ use std::cell::Cell;
 use std::str::FromStr;
 
 use cron::Schedule;
-use chrono::{Utc, DateTime};
+use chrono::{Utc, DateTime, NaiveDateTime};
 use chrono_tz::Tz;
 
 pub struct Timer<'a> {
@@ -97,5 +97,20 @@ impl<'a> Timer<'a> {
         .len() >= 1
     }
 
+}
+
+
+pub fn convert_to_datetime(timestamp: u32, timezone_str: &str) -> Option<DateTime<chrono_tz::Tz>> {
+    let timezone = match timezone_str.parse::<chrono_tz::Tz>(){
+        Ok(tz) => tz,
+        Err(_) => return None
+    };
+
+    let datetime = DateTime::<Utc>::from_utc(
+      NaiveDateTime::from_timestamp(timestamp as i64, 0),
+      Utc
+    );
+
+    Some(datetime.with_timezone(&timezone))
 }
 
