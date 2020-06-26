@@ -129,9 +129,7 @@ impl Command for TimerGetCommand {
 
         let sche = Timer::new(store_cron_s, timezone_str);
 
-        if !debug_flag {
-            sche.update_left_t(store_unix_t as i32);
-        }
+        sche.update_left_t(store_unix_t as i32);
 
         let left_t = sche.left_unix_t.get() as i64;
 
