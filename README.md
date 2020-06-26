@@ -1,4 +1,7 @@
 # redis-timer-rs
+## Dependencies
+- cron format parse
+  - [zslayton/cron](https://github.com/zslayton/cron)
 
 ## Usage
 
