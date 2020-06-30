@@ -76,7 +76,7 @@ impl<'a> Timer<'a> {
         }
 
         if self.is_simple_cronfmt() {
-            return format!("* {} *", self.setting)
+            return format!("00 {} *", self.setting)
         }
 
         self.setting.to_string()
