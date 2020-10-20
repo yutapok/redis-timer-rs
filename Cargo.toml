@@ -1,17 +1,19 @@
 [package]
 name = "redis-mod-timer-rs"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["yutapok <yutautsugi@outlook.com>"]
 edition = "2018"
 
 [lib]
-crate-type = ["dylib"]
+crate-type=["dylib"]
 
 [dependencies]
 bitflags = "1.0"
 libc = "0.2.0"
 time = "0.1"
-crontab = "0.2.0"
+cron = "0.6.1"
+chrono = "0.4"
+chrono-tz = "0.5"
 
 [build-dependencies]
 cc = "1.0"
