@@ -1,8 +1,7 @@
 use redis_mod::redis;
-use redis_mod::redis::Command;
+use redis_mod::redis::{Command};
 
-use redis_mod::error;
-use redis_mod::RModError;
+use redis_mod::{error, RModError};
 
 use crate::timer;
 use crate::timer::Timer;
@@ -22,6 +21,7 @@ impl Command for TimerCommand {
                 self.name()
             ));
         }
+
 
         let action_type = args[1];
         let action_args_vec = vec![vec!["TIMER"], args[2..].to_vec()]
