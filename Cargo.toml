@@ -20,4 +20,3 @@ cc = "1.0"
 
 [dependencies.redis_mod]
 git = "https://github.com/yutapok/redis-mod-rs.git"
-rev = "b6ff413c716164bac279b63d3dfbdba977fd25c7"
