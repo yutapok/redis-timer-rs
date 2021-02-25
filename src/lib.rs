@@ -7,13 +7,14 @@ use std::str;
 use libc::c_int;
 
 use redis_mod::redis::Command;
-use redis_mod::raw;
+use redis_mod::{raw, RedisModuleInitializer};
 
 const MODULE_NAME: &str = "rmod-timer-rs";
 const MODULE_VERSION: c_int = 1;
 
 
 use crate::commands::{TimerCommand, TimerSetCommand, TimerGetCommand};
+
 
 #[allow(non_snake_case)]
 #[allow(unused_variables)]
@@ -56,13 +57,11 @@ pub extern "C" fn RedisModule_OnLoad(
     argv: *mut *mut raw::RedisModuleString,
     argc: c_int,
 ) -> raw::Status {
-    if raw::init(
+    if RedisModuleInitializer::new(
         ctx,
-        format!("{}\0", MODULE_NAME).as_ptr(),
-        MODULE_VERSION,
-        raw::REDISMODULE_APIVER_1,
-    ) == raw::Status::Err
-    {
+        MODULE_NAME,
+        MODULE_VERSION
+    ).run() == raw::Status::Err {
         return raw::Status::Err;
     }
 
